@@ -1,0 +1,10 @@
+.primaryButton{
+    width: 55%;
+    height: 10vh;
+    border: 0;
+    background-color: #0099FF;
+    color: whitesmoke;
+    font-size: 1.3rem;
+    border-radius: 5px;
+    outline: none;
+}

@@ -1,0 +1,49 @@
+.itemContainer{
+    display: block;
+    width: 100%;
+    min-height: 70vh;
+}
+
+.itemCount{
+    margin-top: 5vh;
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+
+.itemList{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+    margin: 3vh 0 5vh 0;
+}
+
+.itemDetail{
+    margin: 1vh 0;
+    height: 10vh;
+    width: 55%;
+    border-radius: 5px;
+    background-color: white;
+    box-shadow: 0 0.5vh rgba(220, 220, 220, 0.2);
+    display: grid;
+    grid-template-columns: 40% 1fr 120px;
+}
+
+.descriptionText{
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding-left: 15%;
+    font-weight: bold;
+}
+
+.deleteText{
+    grid-column: 3/4;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding-right: 25%;
+    font-style: italic;
+}
+

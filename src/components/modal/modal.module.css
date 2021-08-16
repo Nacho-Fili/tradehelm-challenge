@@ -1,0 +1,63 @@
+.modalContainer{
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background-color: rgba(200, 200, 200, 0.5);
+}
+
+.modalInner{
+    position: relative;
+    height: 38%;
+    width: 30%;
+    background-color: #ffffff;
+    border-radius: 5px;
+    top: 30%;
+    left: 35%;
+}
+
+form{
+    height: 100%;
+    width: 100%;
+    display: grid;
+    grid-template-columns: 5% 1fr 1fr 5%;
+    grid-template-rows: 35% 1fr 1fr;
+}
+
+form > h2{
+    padding-top: 10%;
+    grid-column: 2/4;
+}
+
+form > input{
+    grid-row: 2/3;
+    grid-column: 2/4;
+    height: 65%;
+    display: flex;
+    align-self: flex-end;
+    margin-bottom: 10px;
+    background-color: #ffffff;
+    border: 2px solid #909090;
+    outline: none;
+    border-radius: 5px;
+    padding-left: 10px;
+    font-size: large;
+}
+
+form > input:focus{
+    border: 2px solid #0070ff;
+}
+
+.secondaryButton{
+    grid-row: 3/4;
+    grid-column: 2/3;
+    height: 60%;
+    align-self: center;
+    width: 90%;
+    border: 0;
+    background-color: #e2e2e2;
+    font-size: 1.3rem;
+    border-radius: 5px;
+    outline: none;
+}
