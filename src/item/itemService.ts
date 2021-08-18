@@ -10,12 +10,12 @@ const ENDPOINT = process.env.REACT_APP_ENDPOINT || "";
 export default class ItemService {
   socket = io(ENDPOINT, {transports: ["websocket", "polling", "flashsocket"]});
 
-  setSetter = function (
+  onUpdate = function (
     this: ItemService,
-    setItems: React.Dispatch<React.SetStateAction<Item[]>>,
+    callback: React.Dispatch<React.SetStateAction<Item[]>>,
   ): void {
     this.socket.on("items", (items) => {
-      setItems(items);
+      callback(items);
     });
   };
 
