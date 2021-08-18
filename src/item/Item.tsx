@@ -1,4 +1,6 @@
-import React from "react";
+import React, {useContext} from "react";
+
+import userContext from "../user/UserContext";
 
 import ItemType from "./types";
 import styles from "./item.module.css";
@@ -10,13 +12,15 @@ interface Props {
 }
 
 const Item: React.FC<Props> = ({item, itemService}) => {
+  const userLogged = useContext(userContext);
+
   return (
     <div className={styles.itemDetail}>
-      <p className={styles.descriptionText}>{item.name}</p>
+      <p className={styles.descriptionText}>{item.description}</p>
       <p
         className={`${styles.deleteText} clickable`}
         role="button"
-        onClick={() => !!itemService && itemService.remove(item.id)}
+        onClick={() => !!itemService && itemService.remove(item, userLogged)}
       >
         delete
       </p>

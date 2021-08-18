@@ -1,7 +1,8 @@
-import React, {useState, useEffect} from "react";
+import React, {useState, useEffect, useContext} from "react";
 
 import PrimaryButton from "../components/primaryButton/PrimaryButton";
 import Modal from "../components/modal/Modal";
+import userContext from "../user/UserContext";
 
 import ItemList from "./ItemList";
 import styles from "./item.module.css";
@@ -15,11 +16,12 @@ interface Props {
 const ItemsListContainer: React.FC<Props> = ({itemService}) => {
   const [items, setItems] = useState<Item[]>([]);
   const [showModal, setShowModal] = useState(false);
+  const userLogged = useContext(userContext);
 
   useEffect(() => {
     itemService.setSetter(setItems);
-    itemService.fetchAll();
-  }, [itemService]);
+    itemService.fetchAll(userLogged);
+  }, [itemService, userLogged]);
 
   return (
     <div className={styles.itemContainer}>

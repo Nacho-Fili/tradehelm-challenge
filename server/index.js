@@ -1,61 +1,82 @@
+require("dotenv").config();
 const http = require("http");
+const path = require("path");
+
 const express = require("express");
 const socketIO = require("socket.io");
-const itemService = require("./services/itemService");
-const path = require("path")
+const {Client} = require("pg");
 
+const ItemService = require("./services/ItemService");
+const UserService = require("./services/UserService");
+const UserRepository = require("./repository/UserRepository");
+const cleanup = require("./cleanup");
+const ItemRepository = require("./repository/ItemRepository");
 
-const app = express()
+const PORT = process.env.PORT || 8080;
 
-const server = http.createServer(app)
+const app = express();
+const server = http.createServer(app);
+
 const io = socketIO(server, {
-    cors: {
-        origin: "http://localhost:3000/",
-        methods: ["GET", "POST"]
-    }
-})
-const PORT = process.env.PORT || 8080
+  cors: {
+    origin: "http://localhost:3000/",
+    methods: ["GET", "POST"],
+  },
+});
 
-app.use(express.static(path.join(__dirname, "..", "build")))
+const connection = new Client({
+  connectionString: process.env.DATABASE_URL,
+  ssl: {
+    rejectUnauthorized: false,
+  },
+});
 
-app.use(express.static(path.join(__dirname, "..", "public")))
+connection.connect();
 
-app.get("/", (req, res) => res.sendFile(path.join(__dirname, "client", "build","index.html")))
+const userRepository = new UserRepository(connection);
+const itemRepository = new ItemRepository(connection);
+const userService = new UserService(userRepository);
+const itemService = new ItemService(itemRepository);
 
-io.on("connection", socket => {
+app.use(express.static(path.join(__dirname, "..", "build")));
+app.use(express.static(path.join(__dirname, "..", "public")));
 
-    socket.on("add item", item => {
-        itemService
-            .addItem(item)
-            .then(status => {
-                if(status === "success")
-                    itemService
-                        .getItems()
-                        .then(items => { 
-                            socket.emit("items", items)
-                        })
-            })
-    })
+app.get("/", (req, res) => res.sendFile(path.join(__dirname, "client", "build", "index.html")));
 
-    socket.on("get items", () => {
-        itemService
-            .getItems()
-            .then(items => {
-                socket.emit("items", items)
-            })
-    })
+app.get("/create-user", (req, res) => {
+  userService.createUser().then((id) => {
+    res.status(201).send({id});
+  });
+});
 
-    socket.on("delete item", (id) => {
-        itemService
-            .deleteItem(id)
-            .then(status => {
-                if(status === "success"){
-                    itemService
-                        .getItems()
-                        .then(items => socket.emit("items", items))
-                }
-            })
-    })
-})
+io.on("connection", (socket) => {
+  socket.on("add item", ({item, userId}) => {
+    itemService.addItem(item, userId).then((status) => {
+      if (status === "success")
+        itemService.getItems(userId).then((items) => {
+          socket.emit("items", items);
+        });
+    });
+  });
 
-server.listen(PORT, () => console.log(`Listening on port ${PORT}`))
+  socket.on("get items", ({userId}) => {
+    itemService.getItems(userId).then((items) => {
+      socket.emit("items", items);
+    });
+  });
+
+  socket.on("delete item", ({itemId, userId}) => {
+    itemService.deleteItem(itemId, userId).then((status) => {
+      if (status === "success") {
+        itemService.getItems(userId).then((items) => socket.emit("items", items));
+      }
+    });
+  });
+});
+
+server.listen(PORT, () => console.log(`Listening on port ${PORT}`));
+
+cleanup.Cleanup(() => {
+  console.log("Doing cleanup...");
+  connection.end();
+});

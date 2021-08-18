@@ -1,9 +1,11 @@
 import React from "react";
 import io from "socket.io-client";
 
+import User from "../user/types";
+
 import Item from "./types";
 
-const ENDPOINT = process.env.ENDPOINT || "";
+const ENDPOINT = process.env.REACT_APP_ENDPOINT || "";
 
 export default class ItemService {
   socket = io(ENDPOINT, {transports: ["websocket", "polling", "flashsocket"]});
@@ -17,17 +19,18 @@ export default class ItemService {
     });
   };
 
-  fetchAll = function (this: ItemService): void {
-    this.socket.emit("get items");
+  fetchAll = function (this: ItemService, {id}: User): void {
+    this.socket.emit("get items", {userId: id});
   };
 
-  create = function (this: ItemService, name: string): void {
-    const item: Item = {id: +new Date(), name: name};
+  create = function (this: ItemService, name: string, {id}: User): void {
+    const item: Item = {description: name};
 
-    this.socket.emit("add item", item);
+    this.socket.emit("add item", {item, userId: id});
   };
 
-  remove = function (this: ItemService, id: number): void {
-    this.socket.emit("delete item", id);
+  remove = function (this: ItemService, item: Item, {id}: User): void {
+    if (!item.id) return;
+    this.socket.emit("delete item", {itemId: item.id, userId: id});
   };
 }

@@ -8,3 +8,7 @@
     border-radius: 5px;
     outline: none;
 }
+
+.disabled{
+    opacity: 0.3;
+}

@@ -1,6 +1,6 @@
 interface Item {
-  id: number;
-  name: string;
+  id?: number;
+  description: string;
 }
 
 export default Item;
