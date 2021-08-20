@@ -12,7 +12,7 @@ class itemService {
   };
 
   deleteItem = function (itemId, userId) {
-    return itemRepository.deleteItem(itemId, userId);
+    return this.itemRepository.deleteItem(itemId, userId);
   };
 }
 
