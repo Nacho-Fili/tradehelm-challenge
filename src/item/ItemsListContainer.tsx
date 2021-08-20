@@ -17,6 +17,7 @@ interface Props {
 const ItemsListContainer: React.FC<Props> = ({itemService}) => {
   const [items, setItems] = useState<Item[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [itemIsLoading, setItemIsLoading] = useState<boolean>(false);
   const [showModal, setShowModal] = useState(false);
   const userLogged = useContext(userContext);
 
@@ -25,6 +26,7 @@ const ItemsListContainer: React.FC<Props> = ({itemService}) => {
     itemService.onUpdate((items) => {
       setItems(items);
       setIsLoading(false);
+      setItemIsLoading(false);
     });
     itemService.fetchAll(userLogged);
   }, [itemService, userLogged]);
@@ -36,7 +38,12 @@ const ItemsListContainer: React.FC<Props> = ({itemService}) => {
       <p className={styles.itemCount} style={{fontSize: "1.4rem"}}>{`${items.length} ${
         items.length === 1 ? "item" : "items"
       }`}</p>
-      <ItemList itemService={itemService} items={items} />
+      <ItemList
+        itemIsLoading={itemIsLoading}
+        itemService={itemService}
+        items={items}
+        setItemIsLoading={setItemIsLoading}
+      />
       <PrimaryButton onClick={() => setShowModal(!showModal)}>Add item</PrimaryButton>
       <Modal itemService={itemService} show={showModal} onClose={() => setShowModal(false)} />
     </div>
